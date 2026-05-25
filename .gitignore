@@ -54,3 +54,4 @@ dump.rdb
 *.rar
 
 *.7z
+.env
