@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./config/swagger.json');
 const routes = require('./routes');
@@ -11,8 +12,9 @@ app.use(cors());
 app.use(express.json());
 
 
-app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/', (req, res) => {
   res.json({ message: 'Investment Tracker API' });
