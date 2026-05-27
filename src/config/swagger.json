@@ -1,0 +1,43 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Investment Tracker API",
+    "version": "1.0.0",
+    "description": "API para controle de carteiras de investimentos e transações"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/api/wallets": {
+      "get": {
+        "summary": "Lista todas as carteiras",
+        "responses": {
+          "200": { "description": "Sucesso" }
+        }
+      },
+      "post": {
+        "summary": "Cria uma nova carteira",
+        "responses": {
+          "201": { "description": "Criado" }
+        }
+      }
+    },
+    "/api/wallets/{id}": {
+      "put": {
+        "summary": "Atualiza uma carteira por ID",
+        "responses": {
+          "200": { "description": "Atualizado" }
+        }
+      },
+      "delete": {
+        "summary": "Deleta uma carteira por ID",
+        "responses": {
+          "204": { "description": "Deletado" }
+        }
+      }
+    }
+  }
+}
