@@ -20,9 +20,16 @@ const deleteWallet = async (id) => {
   return wallet;
 };
 
+const getWalletById = async (id) => {
+  const wallet = await walletRepository.findById(id);
+  if (!wallet) throw new Error('Carteira não encontrada');
+  return wallet;
+};
+
 module.exports = {
   getAllWallets,
   createWallet,
   updateWallet,
-  deleteWallet
+  deleteWallet,
+  getWalletById
 };

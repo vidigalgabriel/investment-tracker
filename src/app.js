@@ -11,16 +11,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// AS ROTAS DE API DEVEM VIR ANTES DOS ARQUIVOS ESTÁTICOS
+app.use('/api', routes);
 
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/', (req, res) => {
-  res.json({ message: 'Investment Tracker API' });
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.use('/api', routes);
 app.use(errorHandler);
 
 module.exports = app;

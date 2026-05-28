@@ -3,29 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Investment Tracker</title>
+  <title>Investment Tracker | Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    body { font-family: sans-serif; background: #121212; color: #fff; margin: 20px; }
-    .card { background: #1e1e1e; padding: 15px; margin: 10px 0; border-radius: 8px; cursor: pointer; }
-    .card:hover { border: 1px solid #00adb5; }
-    button { background: #00adb5; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; margin-top: 5px; }
-    input, select { padding: 8px; margin: 5px 0; display: block; width: 250px; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #1e1e1e; border-radius: 8px; overflow: hidden; }
-    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
-    th { background: #222; color: #00adb5; }
-    .btn-danger { background: #ff4444; }
-    .btn-secondary { background: #555; margin-left: 10px; }
-    .flex-container { display: flex; gap: 30px; margin-top: 20px; flex-wrap: wrap; }
-    .box { flex: 1; min-width: 300px; background: #1a1a1a; padding: 20px; border-radius: 8px; }
+    :root { --bg: #0f172a; --card: #1e293b; --accent: #deff9a; --text: #f8fafc; --danger: #ef4444; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 20px; margin-bottom: 30px; }
+    .btn { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-secondary { background: #475569; color: #fff; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .wallet-card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #334155; cursor: pointer; position: relative; }
+    .wallet-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .wallet-card h3 { margin: 0 0 10px 0; color: var(--accent); }
+    .wallet-card p { margin: 0; font-size: 14px; color: #94a3b8; }
+    .actions { margin-top: 15px; display: flex; gap: 10px; }
+    table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 8px; overflow: hidden; margin-top: 20px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; }
+    th { background: #0f172a; color: var(--accent); }
+    .form-group { background: var(--card); padding: 25px; border-radius: 12px; margin-top: 20px; }
+    input, select { width: 100%; padding: 12px; margin: 8px 0 20px 0; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box; }
   </style>
 </head>
 <body>
-
-  <h1>📊 Meu Tracker de Investimentos</h1>
-  <hr>
-  
-  <div id="app"></div>
-
+  <div class="container">
+    <header id="header-content">
+      <h1>📊 Investment Tracker</h1>
+      <button class="btn btn-primary" onclick="showWalletForm()">+ Nova Carteira</button>
+    </header>
+    <div id="main-app"></div>
+  </div>
   <script src="app.js"></script>
 </body>
 </html>

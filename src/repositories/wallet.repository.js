@@ -4,6 +4,10 @@ const findAll = async () => {
   return await Wallet.find();
 };
 
+const findById = async (id) => {
+  return await Wallet.findById(id);
+};
+
 const create = async (data) => {
   return await Wallet.create(data);
 };
@@ -18,6 +22,7 @@ const remove = async (id) => {
 
 module.exports = {
   findAll,
+  findById,
   create,
   update,
   remove

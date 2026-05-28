@@ -40,8 +40,12 @@ const remove = async (req, res) => {
 const getById = async (req, res) => {
   try {
     const wallet = await walletService.getWalletById(req.params.id);
-    const posicaoAtivos = await transactionService.getWalletPosition(req.params.id);
+    let posicaoAtivos = {};
     
+    if (transactionService && transactionService.getWalletPosition) {
+      posicaoAtivos = await transactionService.getWalletPosition(req.params.id);
+    }
+
     res.status(200).json({
       _id: wallet._id,
       nome: wallet.nome,
@@ -49,7 +53,10 @@ const getById = async (req, res) => {
       posicao: posicaoAtivos
     });
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    console.log("========== ERRO NO BACKEND ==========");
+    console.log(error.message);
+    console.log("=====================================");
+    res.status(500).json({ message: error.message });
   }
 };
 
