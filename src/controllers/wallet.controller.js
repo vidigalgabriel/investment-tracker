@@ -1,4 +1,5 @@
 const walletService = require('../services/wallet.service');
+const transactionService = require('../services/transaction.service');
 
 const getAll = async (req, res) => {
   try {
@@ -36,9 +37,26 @@ const remove = async (req, res) => {
   }
 };
 
+const getById = async (req, res) => {
+  try {
+    const wallet = await walletService.getWalletById(req.params.id);
+    const posicaoAtivos = await transactionService.getWalletPosition(req.params.id);
+    
+    res.status(200).json({
+      _id: wallet._id,
+      nome: wallet.nome,
+      descricao: wallet.descricao,
+      posicao: posicaoAtivos
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getAll,
   create,
   update,
-  remove
+  remove,
+  getById
 };

@@ -1,20 +1,35 @@
-const transactionRepository = require('../repositories/transaction.repository');
+const walletRepository = require('../repositories/wallet.repository');
 
-const createTransaction = async (data) => {
-  if (!data.carteiraId || !data.ativo || !data.quantidade || !data.preco) {
-    throw new Error('Dados obrigatórios ausentes');
-  }
-  return await transactionRepository.create(data);
+const getAllWallets = async () => {
+  return await walletRepository.findAll();
 };
 
-const getTransactions = async (walletId) => {
-  if (walletId) {
-    return await transactionRepository.findByWalletId(walletId);
-  }
-  return await transactionRepository.findAll();
+const createWallet = async (data) => {
+  return await walletRepository.create(data);
+};
+
+const updateWallet = async (id, data) => {
+  const wallet = await walletRepository.update(id, data);
+  if (!wallet) throw new Error('Carteira não encontrada');
+  return wallet;
+};
+
+const deleteWallet = async (id) => {
+  const wallet = await walletRepository.remove(id);
+  if (!wallet) throw new Error('Carteira não encontrada');
+  return wallet;
+};
+
+const getWalletById = async (id) => {
+  const wallet = await walletRepository.update(id, {}, { new: true });
+  if (!wallet) throw new Error('Carteira não encontrada');
+  return wallet;
 };
 
 module.exports = {
-  createTransaction,
-  getTransactions
+  getAllWallets,
+  createWallet,
+  updateWallet,
+  deleteWallet,
+  getWalletById
 };
