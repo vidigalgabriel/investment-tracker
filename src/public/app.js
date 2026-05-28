@@ -38,11 +38,11 @@ async function viewWallet(id) {
         <div class="form-group">
           <h3>Ativos</h3>
           <table>
-            <thead><tr><th>Ativo</th><th>Qtd</th><th>Média</th></tr></thead>
+            <thead><tr><th>Ativo</th><th>Qtd</th><th>Média</th><th>Total</th></tr></thead>
             <tbody>
               ${Object.keys(data.posicao).map(ticker => `
-                <tr><td>${ticker}</td><td>${data.posicao[ticker].quantidade}</td><td>R$ ${data.posicao[ticker].custoMedio.toFixed(2)}</td></tr>
-              `).join('') || '<tr><td colspan="3">Vazio</td></tr>'}
+                <tr><td>${ticker}</td><td>${data.posicao[ticker].quantidade}</td><td>R$ ${data.posicao[ticker].custoMedio.toFixed(2)}</td><td>R$ ${data.posicao[ticker].custoTotal.toFixed(2)}</td></tr>
+              `).join('') || '<tr><td colspan="4">Vazio</td></tr>'}
             </tbody>
           </table>
         </div>
