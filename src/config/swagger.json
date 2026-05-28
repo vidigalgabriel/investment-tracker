@@ -20,22 +20,106 @@
       },
       "post": {
         "summary": "Cria uma nova carteira",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": { "type": "string" },
+                  "descricao": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "201": { "description": "Criado" }
         }
       }
     },
     "/api/wallets/{id}": {
+      "get": {
+        "summary": "Busca os detalhes da carteira (Ativos, Média e Total)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Sucesso" }
+        }
+      },
       "put": {
         "summary": "Atualiza uma carteira por ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": { "type": "string" },
+                  "descricao": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
         "responses": {
-          "200": { "description": "Atualizado" }
+          "200": { "description": "Sucesso" }
         }
       },
       "delete": {
         "summary": "Deleta uma carteira por ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
         "responses": {
-          "204": { "description": "Deletado" }
+          "204": { "description": "Sucesso" }
+        }
+      }
+    },
+    "/api/transactions": {
+      "get": {
+        "summary": "Lista as transações (opcional: filtrar por ID da carteira)",
+        "parameters": [
+          {
+            "name": "walletId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "ID da carteira para filtrar"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Sucesso" }
+        }
+      },
+      "post": {
+        "summary": "Registra uma nova transação (Compra/Venda)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "carteiraId": { "type": "string" },
+                  "ativo": { "type": "string", "example": "BTC" },
+                  "tipo": { "type": "string", "example": "COMPRA" },
+                  "quantidade": { "type": "number", "example": 2 },
+                  "preco": { "type": "number", "example": 1000 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Criado" },
+          "400": { "description": "Erro de validação (ex: saldo insuficiente)" }
         }
       }
     }
