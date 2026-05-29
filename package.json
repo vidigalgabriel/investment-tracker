@@ -6,11 +6,15 @@
   "directories": {
     "test": "tests"
   },
- "scripts": {
-  "start": "node src/server.js",
-  "dev": "nodemon src/server.js",
-  "test": "jest"
-},
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest"
+  },
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "test": "jest"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vidigalgabriel/investment-tracker.git"
