@@ -41,16 +41,22 @@ const getById = async (req, res) => {
   try {
     const wallet = await walletService.getWalletById(req.params.id);
     let posicaoAtivos = {};
+    let historicoTransacoes = [];
     
     if (transactionService && transactionService.getWalletPosition) {
       posicaoAtivos = await transactionService.getWalletPosition(req.params.id);
+    }
+
+    if (transactionService && transactionService.getTransactions) {
+      historicoTransacoes = await transactionService.getTransactions(req.params.id);
     }
 
     res.status(200).json({
       _id: wallet._id,
       nome: wallet.nome,
       descricao: wallet.descricao,
-      posicao: posicaoAtivos
+      posicao: posicaoAtivos,
+      transacoes: historicoTransacoes
     });
   } catch (error) {
     console.log("========== ERRO NO BACKEND ==========");

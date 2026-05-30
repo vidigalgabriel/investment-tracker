@@ -11,7 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// AS ROTAS DE API DEVEM VIR ANTES DOS ARQUIVOS ESTÁTICOS
+
 app.use('/api', routes);
 
 app.use(express.static(path.join(__dirname, 'public')));

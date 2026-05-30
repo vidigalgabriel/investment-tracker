@@ -25,24 +25,26 @@ async function loadWallets() {
 async function viewWallet(id) {
   mainApp.innerHTML = '<p>Carregando dados da carteira...</p>';
   try {
-    const res = await fetch(`${API}/wallets/${id}`);
-    if (!res.ok) throw new Error();
-    const data = await res.json();
+    const resWallet = await fetch(`${API}/wallets/${id}`);
+    if (!resWallet.ok) throw new Error();
+    const data = await resWallet.json();
+
+    const transactions = data.transacoes || [];
     
     mainApp.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
         <h2>Carteira: ${data.nome}</h2>
         <button class="btn btn-secondary" onclick="loadWallets()">Voltar</button>
       </div>
       <div class="grid">
         <div class="form-group">
-          <h3>Ativos</h3>
+          <h3>Ativos Atuais</h3>
           <table>
             <thead><tr><th>Ativo</th><th>Qtd</th><th>Média</th><th>Total</th></tr></thead>
             <tbody>
               ${Object.keys(data.posicao).map(ticker => `
                 <tr><td>${ticker}</td><td>${data.posicao[ticker].quantidade}</td><td>R$ ${data.posicao[ticker].custoMedio.toFixed(2)}</td><td>R$ ${data.posicao[ticker].custoTotal.toFixed(2)}</td></tr>
-              `).join('') || '<tr><td colspan="4">Vazio</td></tr>'}
+              `).join('') || '<tr><td colspan="4">Nenhum ativo em carteira</td></tr>'}
             </tbody>
           </table>
         </div>
@@ -54,14 +56,28 @@ async function viewWallet(id) {
           <input type="number" id="t-preco" placeholder="Preço">
           <button class="btn btn-primary" onclick="addTransaction('${id}')">Confirmar</button>
         </div>
+      </div>
+      <div class="form-group" style="margin-top: 30px;">
+        <h3>Histórico de Movimentações (Extrato)</h3>
+        <div class="timeline" style="background: #1e1e1e; padding: 15px; border-radius: 8px;">
+          ${transactions.map(tx => `
+            <div style="padding: 10px 0; border-bottom: 1px solid #333; display: flex; justify-content: space-between;">
+              <span>
+                ${tx.tipo === 'COMPRA' ? '<b style="color: #4caf50;">🟢 COMPRA</b>' : '<b style="color: #f44336;">🔴 VENDA</b>'} 
+                de ${tx.quantidade} ${tx.ativo} @ R$ ${tx.preco.toFixed(2)}
+              </span>
+              <span style="color: #888;">${new Date(tx.data || Date.now()).toLocaleDateString('pt-BR')}</span>
+            </div>
+          `).join('') || '<p style="color: #888;">Nenhuma transação realizada nesta carteira.</p>'}
+        </div>
       </div>`;
-  } catch (e) { alert('Erro ao abrir detalhes. Verifique o ID.'); loadWallets(); }
+  } catch (e) { alert('Erro ao abrir detalhes.'); loadWallets(); }
 }
 
 async function addTransaction(walletId) {
   const data = {
     carteiraId: walletId,
-    ativo: document.getElementById('t-ativo').value,
+    ativo: document.getElementById('t-ativo').value.toUpperCase(),
     tipo: document.getElementById('t-tipo').value,
     quantidade: Number(document.getElementById('t-qtd').value),
     preco: Number(document.getElementById('t-preco').value)
