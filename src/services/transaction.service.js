@@ -7,9 +7,11 @@ const createTransaction = async (data) => {
     throw new Error('Dados obrigatórios ausentes');
   }
 
+  const ativoFormatado = ativo.toUpperCase().trim();
+
   if (tipo.toUpperCase() === 'VENDA') {
     const transacoes = await transactionRepository.findByWalletId(carteiraId);
-    const transacoesDoAtivo = transacoes.filter(t => t.ativo.toUpperCase() === ativo.toUpperCase());
+    const transacoesDoAtivo = transacoes.filter(t => t.ativo.toUpperCase().trim() === ativoFormatado);
 
     let quantidadeDisponivel = 0;
     let custoTotal = 0;
@@ -43,6 +45,7 @@ const createTransaction = async (data) => {
     data.lucroRealizado = 0;
   }
 
+  data.ativo = ativoFormatado;
   return await transactionRepository.create(data);
 };
 
@@ -58,7 +61,7 @@ const getWalletPosition = async (walletId) => {
   const posicao = {};
 
   transacoes.forEach(t => {
-    const ativo = t.ativo.toUpperCase();
+    const ativo = t.ativo.toUpperCase().trim();
     if (!posicao[ativo]) {
       posicao[ativo] = { quantidade: 0, custoTotal: 0, custoMedio: 0, lucroTotal: 0 };
     }
@@ -67,10 +70,15 @@ const getWalletPosition = async (walletId) => {
       posicao[ativo].quantidade += t.quantidade;
       posicao[ativo].custoTotal += (t.quantidade * t.preco);
     } else if (t.tipo.toUpperCase() === 'VENDA') {
+      const custoMedioMomento = posicao[ativo].quantidade > 0 ? (posicao[ativo].custoTotal / posicao[ativo].quantidade) : 0;
+      
       posicao[ativo].quantidade -= t.quantidade;
-      posicao[ativo].custoTotal -= (t.quantidade * posicao[ativo].custoMedio);
-      if (t.lucroRealizado) {
+      posicao[ativo].custoTotal -= (t.quantidade * custoMedioMomento);
+      
+      if (t.lucroRealizado !== undefined) {
         posicao[ativo].lucroTotal += t.lucroRealizado;
+      } else {
+        posicao[ativo].lucroTotal += (t.preco - custoMedioMomento) * t.quantidade;
       }
     }
 
