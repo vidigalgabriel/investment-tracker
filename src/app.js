@@ -1,6 +1,8 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const mongoose = require('mongoose');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./config/swagger.json');
 const routes = require('./routes');
@@ -10,6 +12,10 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('Conexão com o MongoDB estabelecida com sucesso!'))
+  .catch((err) => console.error('Erro ao conectar ao MongoDB:', err.message));
 
 app.use('/api', routes);
 
