@@ -90,8 +90,7 @@
             "name": "walletId",
             "in": "query",
             "required": false,
-            "schema": { "type": "string" },
-            "description": "ID da carteira para filtrar"
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -108,10 +107,10 @@
                 "type": "object",
                 "properties": {
                   "carteiraId": { "type": "string" },
-                  "ativo": { "type": "string", "example": "BTC" },
-                  "tipo": { "type": "string", "example": "COMPRA" },
-                  "quantidade": { "type": "number", "example": 2 },
-                  "preco": { "type": "number", "example": 1000 }
+                  "ativo": { "type": "string" },
+                  "tipo": { "type": "string" },
+                  "quantidade": { "type": "number" },
+                  "preco": { "type": "number" }
                 }
               }
             }
@@ -119,7 +118,43 @@
         },
         "responses": {
           "201": { "description": "Criado" },
-          "400": { "description": "Erro de validação (ex: saldo insuficiente)" }
+          "400": { "description": "Erro de validação" }
+        }
+      }
+    },
+    "/api/transactions/{id}": {
+      "put": {
+        "summary": "Atualiza uma transação por ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ativo": { "type": "string" },
+                  "tipo": { "type": "string" },
+                  "quantidade": { "type": "number" },
+                  "preco": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Sucesso" }
+        }
+      },
+      "delete": {
+        "summary": "Deleta uma transação por ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "Sucesso" }
         }
       }
     }

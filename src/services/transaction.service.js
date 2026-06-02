@@ -40,7 +40,7 @@ const createTransaction = async (data) => {
       throw error;
     }
 
-    data.lucroRealizado = (preco - custoMedio) * quantidade;
+    data.lucroRealizado = (preco - custoMedio) * quantity;
   } else {
     data.lucroRealizado = 0;
   }
@@ -93,8 +93,18 @@ const getWalletPosition = async (walletId) => {
   return posicao;
 };
 
+const updateTransaction = async (id, data) => {
+  return await transactionRepository.update(id, data);
+};
+
+const deleteTransaction = async (id) => {
+  return await transactionRepository.remove(id);
+};
+
 module.exports = {
   createTransaction,
   getTransactions,
-  getWalletPosition
+  getWalletPosition,
+  updateTransaction,
+  deleteTransaction
 };
