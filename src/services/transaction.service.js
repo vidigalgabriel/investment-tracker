@@ -40,7 +40,7 @@ const createTransaction = async (data) => {
       throw error;
     }
 
-    data.lucroRealizado = (preco - custoMedio) * quantity;
+    data.lucroRealizado = (preco - custoMedio) * quantidade;
   } else {
     data.lucroRealizado = 0;
   }
