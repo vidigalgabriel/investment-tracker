@@ -25,6 +25,13 @@ async function loadWallets() {
     });
 
     let html = `
+      <div style="background: #151f32; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #38bdf8;">
+        <h3 style="margin-top: 0; color: #fff;">📊 Bem-vindo ao Investment Tracker</h3>
+        <p style="color: #94a3b8; margin: 0; font-size: 14px; line-height: 1.6;">
+          Esta é uma plataforma Single Page Application (SPA) para consolidação de ativos financeiros. Aqui você pode criar carteiras personalizadas e registrar suas ordens de compra e venda. O sistema calcula automaticamente o custo médio ponderado e computa o lucro real assim que uma posição é encerrada.
+        </p>
+      </div>
+
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; width: 100%;">
         <div class="form-group" style="margin-top:0; text-align:center; border-top: 4px solid #deff9a; background: #151f32;">
           <small style="color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Patrimônio Atual</small>
@@ -39,6 +46,7 @@ async function loadWallets() {
           <h2 style="font-size: 28px; margin: 10px 0 0 0; color: #fff;">${totalTransacoesGeral}</h2>
         </div>
       </div>
+      
       <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; width:100%;">
         <h2 style="margin:0;">Minhas Carteiras</h2>
         <button class="btn btn-primary" onclick="showWalletForm()">+ Nova Carteira</button>
@@ -67,11 +75,11 @@ function showWalletForm() {
       <h2>Nova Carteira</h2>
       <div style="margin-bottom: 15px;">
         <label style="display:block; margin-bottom: 5px; color: #94a3b8;">Nome da Carteira</label>
-        <input type="text" id="w-nome" placeholder="Ex: Ações Brasileiras" style="width:100%; box-sizing:border-box;">
+        <input type="text" id="w-nome" placeholder="Ex: Criptomoedas ou Ações" style="width:100%; box-sizing:border-box;">
       </div>
       <div style="margin-bottom: 20px;">
         <label style="display:block; margin-bottom: 5px; color: #94a3b8;">Descrição</label>
-        <input type="text" id="w-desc" placeholder="Ex: Ativos de Longo Prazo" style="width:100%; box-sizing:border-box;">
+        <input type="text" id="w-desc" placeholder="Ex: Ativos de alto risco" style="width:100%; box-sizing:border-box;">
       </div>
       <button class="btn btn-primary" onclick="createWallet()">Salvar Carteira</button>
       <button class="btn btn-secondary" onclick="loadWallets()" style="margin-left: 10px;">Cancelar</button>
@@ -103,22 +111,34 @@ async function viewWallet(id) {
             <tr style="border-bottom: 2px solid #334155; color: #94a3b8;">
               <th style="padding: 12px 8px;">Ativo</th>
               <th style="padding: 12px 8px;">Qtd</th>
-              <th style="padding: 12px 8px;">Média</th>
-              <th style="padding: 12px 8px;">Total</th>
-              <th style="padding: 12px 8px;">Lucro Realizado</th>
+              <th style="padding: 12px 8px;">Média de Compra</th>
+              <th style="padding: 12px 8px;">Total Alocado</th>
+              <th style="padding: 12px 8px;">Lucro Realizado (%)</th>
             </tr>
           </thead>
           <tbody>
             ${Object.keys(data.posicao).map(ticker => {
               const lucro = data.posicao[ticker].lucroTotal || 0;
+              const custoTotalOriginal = data.posicao[ticker].custoTotal || 0;
+              
+              let porcentagemLucro = 0;
+              if (lucro !== 0) {
+                const totalCompradoHistorico = custoTotalOriginal + (lucro < 0 ? Math.abs(lucro) : 0);
+                porcentagemLucro = totalCompradoHistorico > 0 ? (lucro / totalCompradoHistorico) * 100 : 0;
+              }
+
               const corLucro = lucro > 0 ? '#4caf50' : (lucro < 0 ? '#f44336' : '#fff');
+              const sinalLucro = lucro > 0 ? '+' : '';
+              
               return `
                 <tr style="border-bottom: 1px solid #1e293b;">
                   <td style="padding: 12px 8px; font-weight: bold; color: #deff9a;">${ticker}</td>
                   <td style="padding: 12px 8px;">${data.posicao[ticker].quantidade}</td>
                   <td style="padding: 12px 8px;">R$ ${data.posicao[ticker].custoMedio.toFixed(2)}</td>
-                  <td style="padding: 12px 8px;">R$ ${data.posicao[ticker].custoTotal.toFixed(2)}</td>
-                  <td style="padding: 12px 8px; color: ${corLucro}; font-weight: bold;">R$ ${lucro.toFixed(2)}</td>
+                  <td style="padding: 12px 8px;">R$ ${custoTotalOriginal.toFixed(2)}</td>
+                  <td style="padding: 12px 8px; color: ${corLucro}; font-weight: bold;">
+                    R$ ${lucro.toFixed(2)} <span style="font-size: 13px; font-weight: normal; margin-left: 5px;">(${sinalLucro}${porcentagemLucro.toFixed(1)}%)</span>
+                  </td>
                 </tr>
               `;
             }).join('') || '<tr><td colspan="5" style="padding: 15px; text-align:center; color: #94a3b8;">Nenhum ativo nesta carteira</td></tr>'}
@@ -133,7 +153,7 @@ async function viewWallet(id) {
             let infoLucro = '';
             if (tx.tipo === 'VENDA' && tx.lucroRealizado !== undefined) {
               const corTxLucro = tx.lucroRealizado >= 0 ? '#4caf50' : '#f44336';
-              infoLucro = ` <span style="color: ${corTxLucro}; font-size: 14px; font-weight: bold;">(Lucro: R$ ${tx.lucroRealizado.toFixed(2)})</span>`;
+              infoLucro = ` <span style="color: ${corTxLucro}; font-size: 14px; font-weight: bold;">(Retorno: R$ ${tx.lucroRealizado.toFixed(2)})</span>`;
             }
             return `
               <div style="padding: 12px 0; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
@@ -149,10 +169,18 @@ async function viewWallet(id) {
       </div>
 
       <div id="txModal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); align-items: center; justify-content: center;">
-        <div style="background: #151f32; padding: 30px; border-radius: 8px; width: 100%; max-width: 450px; box-sizing: border-box; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
-          <h3 style="margin-top: 0; margin-bottom: 20px;">Nova Transação</h3>
+        <div style="background: #151f32; padding: 25px; border-radius: 8px; width: 100%; max-width: 480px; box-sizing: border-box; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+          <h3 style="margin-top: 0; margin-bottom: 15px;">Nova Transação</h3>
+          
+          <div style="background: #0f172a; padding: 12px; border-radius: 6px; margin-bottom: 15px; border-left: 3px solid #a855f7; font-size: 12px; color: #94a3b8; line-height: 1.5;">
+            <strong>⚠️ Regras Importantes de Uso:</strong><br>
+            • Utilize sempre a <b>sigla padrão (Ticker)</b> do ativo em maiúsculo (ex: <b>BTC</b>, <b>AAPL</b>, <b>PETR4</b>).<br>
+            • Evite digitar nomes por extenso (ex: "Bitcoin", "Apple"), pois o sistema diferenciará como ativos separados.<br>
+            • Para ordens de <b>VENDA</b>, certifique-se de que possui quantidade suficiente em custódia para evitar rejeições.
+          </div>
+
           <div style="margin-bottom: 12px;">
-            <label style="display:block; margin-bottom:4px; color:#94a3b8;">Ativo</label>
+            <label style="display:block; margin-bottom:4px; color:#94a3b8;">Sigla do Ativo (Ticker)</label>
             <input type="text" id="t-ativo" placeholder="Ex: BTC" style="width:100%; box-sizing:border-box;">
           </div>
           <div style="margin-bottom: 12px;">
@@ -188,7 +216,7 @@ function closeTransactionModal() {
 async function addTransaction(walletId) {
   const data = {
     carteiraId: walletId,
-    ativo: document.getElementById('t-ativo').value.toUpperCase(),
+    ativo: document.getElementById('t-ativo').value.toUpperCase().trim(),
     tipo: document.getElementById('t-tipo').value,
     quantidade: Number(document.getElementById('t-qtd').value),
     preco: Number(document.getElementById('t-preco').value)
