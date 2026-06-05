@@ -4,6 +4,7 @@ const API = '/api';
 async function loadWallets() {
   mainApp.innerHTML = '<p>Buscando carteiras...</p>';
   try {
+    // Busca dados gerais e detalhados para consolidar os totais
     const res = await fetch(`${API}/wallets`);
     const wallets = await res.json();
     
@@ -24,6 +25,7 @@ async function loadWallets() {
       totalTransacoesGeral += w.transacoes ? w.transacoes.length : 0;
     });
 
+    // Visão 1: Painel inicial e listagem de carteiras
     let html = `
       <div style="background: #151f32; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #38bdf8;">
         <h3 style="margin-top: 0; color: #fff;">📊 Bem-vindo ao Investment Tracker</h3>
@@ -70,6 +72,7 @@ async function loadWallets() {
 }
 
 function showWalletForm() {
+  // Visão 2: Formulário de cadastro de carteiras
   mainApp.innerHTML = `
     <div class="form-group" style="max-width: 600px; margin: 40px auto; background: #151f32; padding: 30px; border-radius: 8px;">
       <h2>Nova Carteira</h2>
@@ -95,6 +98,7 @@ async function viewWallet(id) {
 
     const transactions = data.transacoes || [];
     
+    // Visão 3: Detalhes, ativos atuais e histórico da carteira
     mainApp.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; width: 100%;">
         <h2>Carteira: ${data.nome}</h2>
@@ -121,6 +125,7 @@ async function viewWallet(id) {
               const lucro = data.posicao[ticker].lucroTotal || 0;
               const custoTotalOriginal = data.posicao[ticker].custoTotal || 0;
               
+              // Processamento da variação percentual
               let porcentagemLucro = 0;
               if (lucro !== 0) {
                 const totalCompradoHistorico = custoTotalOriginal + (lucro < 0 ? Math.abs(lucro) : 0);
@@ -214,6 +219,7 @@ function closeTransactionModal() {
 }
 
 async function addTransaction(walletId) {
+  // Envio de nova ordem via POST assíncrono
   const data = {
     carteiraId: walletId,
     ativo: document.getElementById('t-ativo').value.toUpperCase().trim(),
@@ -255,4 +261,5 @@ async function deleteWallet(id) {
   }
 }
 
+// Inicialização síncrona do painel principal
 loadWallets();

@@ -2,6 +2,7 @@ const transactionService = require('../services/transaction.service');
 
 const create = async (req, res) => {
   try {
+    // Criação de nova movimentação
     const transaction = await transactionService.createTransaction(req.body);
     res.status(201).json(transaction);
   } catch (error) {
@@ -11,6 +12,7 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
+    // Listagem geral ou filtrada por carteira
     const transactions = await transactionService.getTransactions(req.query.walletId);
     res.status(200).json(transactions);
   } catch (error) {
@@ -20,6 +22,7 @@ const getAll = async (req, res) => {
 
 const update = async (req, res) => {
   try {
+    // Atualização de registro por ID
     const transaction = await transactionService.updateTransaction(req.params.id, req.body);
     res.status(200).json(transaction);
   } catch (error) {
@@ -29,6 +32,7 @@ const update = async (req, res) => {
 
 const remove = async (req, res) => {
   try {
+    // Exclusão definitiva do registro
     await transactionService.deleteTransaction(req.params.id);
     res.status(204).send();
   } catch (error) {

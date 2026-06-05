@@ -3,6 +3,7 @@ const transactionService = require('../services/transaction.service');
 
 const getAll = async (req, res) => {
   try {
+    // Retorna a listagem de todas as carteiras
     const wallets = await walletService.getAllWallets();
     res.status(200).json(wallets);
   } catch (error) {
@@ -12,6 +13,7 @@ const getAll = async (req, res) => {
 
 const create = async (req, res) => {
   try {
+    // Cadastro de nova carteira vazia
     const wallet = await walletService.createWallet(req.body);
     res.status(201).json(wallet);
   } catch (error) {
@@ -21,6 +23,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
+    // Alteração de dados cadastrais da carteira
     const wallet = await walletService.updateWallet(req.params.id, req.body);
     res.status(200).json(wallet);
   } catch (error) {
@@ -30,6 +33,7 @@ const update = async (req, res) => {
 
 const remove = async (req, res) => {
   try {
+    // Remoção da carteira por ID
     await walletService.deleteWallet(req.params.id);
     res.status(204).send();
   } catch (error) {
@@ -39,10 +43,12 @@ const remove = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
+    // Busca dados básicos da carteira
     const wallet = await walletService.getWalletById(req.params.id);
     let posicaoAtivos = {};
     let historicoTransacoes = [];
     
+    // Consolida posições calculadas e histórico vinculado
     if (transactionService && transactionService.getWalletPosition) {
       posicaoAtivos = await transactionService.getWalletPosition(req.params.id);
     }
